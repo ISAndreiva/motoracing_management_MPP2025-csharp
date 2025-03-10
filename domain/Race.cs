@@ -1,6 +1,6 @@
 namespace ConcursMotociclism.domain;
 
-public class Race(Guid id, string raceName, int raceClass ) : Entity(id)
+public class Race(Guid id, string raceName, int raceClass ) : Entity<Guid>(id)
 {
     public string RaceName { get; } = raceName;
     public int RaceClass { get; } = raceClass;

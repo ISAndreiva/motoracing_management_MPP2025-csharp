@@ -1,6 +1,6 @@
 namespace ConcursMotociclism.domain;
 
-public class Entity(Guid id)
+public class Entity<TId>(TId id)
 {
-    public Guid Id { get; } = id;
+    public TId Id { get; } = id;
 }

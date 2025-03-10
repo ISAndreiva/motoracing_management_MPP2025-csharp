@@ -1,6 +1,6 @@
 namespace ConcursMotociclism.domain;
 
-public class User(Guid id, string username, string passwordHash) : Entity(id)
+public class User(Guid id, string username, string passwordHash) : Entity<Guid>(id)
 {
     public string Username { get; } = username;
     public string PasswordHash { get; } = passwordHash;

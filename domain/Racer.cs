@@ -1,14 +1,14 @@
 namespace ConcursMotociclism.domain;
 
-public class Racer(Guid id, string name, Guid teamId, string cnp) : Entity(id)
+public class Racer(Guid id, string name, Team team, string cnp) : Entity<Guid>(id)
 {
     public string Name { get; } = name;
-    public Guid TeamId { get; set; } = teamId;
+    public Team Team { get; set; } = team;
     public string Cnp { get; } = cnp;
 
     protected bool Equals(Racer other)
     {
-        return Name == other.Name && TeamId.Equals(other.TeamId) && Cnp == other.Cnp;
+        return Name == other.Name && Team.Equals(other.Team) && Cnp == other.Cnp;
     }
 
     public override bool Equals(object? obj)
@@ -21,6 +21,6 @@ public class Racer(Guid id, string name, Guid teamId, string cnp) : Entity(id)
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Name, TeamId, Cnp);
+        return HashCode.Combine(Name, Team, Cnp);
     }
 }
