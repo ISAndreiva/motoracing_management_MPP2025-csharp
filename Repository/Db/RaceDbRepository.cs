@@ -8,48 +8,60 @@ public class RaceDbRepository() : AbstractDbRepository<Race, Guid>("race"), IRac
 {
     public override void Add(Race entity)
     {
-        const string sql = "INSERT INTO race (uuid, name, class) VALUES (@uuid, @name, @class)";
-        using var connection = DbUtils.GetConnection();
-        using var statement = connection.CreateCommand();
-        statement.CommandText = sql;
-        
-        var paramGuid = statement.CreateParameter();
-        paramGuid.ParameterName = "uuid";
-        paramGuid.Value = entity.Id.ToString();
-        statement.Parameters.Add(paramGuid);
-        var paramName = statement.CreateParameter();
-        paramName.ParameterName = "name";
-        paramName.Value = entity.RaceName;
-        statement.Parameters.Add(paramName);
-        var paramClass = statement.CreateParameter();
-        paramClass.ParameterName = "class";
-        paramClass.Value = entity.RaceClass;
-        statement.Parameters.Add(paramClass);
+        try
+        {
+            const string sql = "INSERT INTO race (uuid, name, class) VALUES (@uuid, @name, @class)";
+            using var connection = DbUtils.GetConnection();
+            using var statement = connection.CreateCommand();
+            statement.CommandText = sql;
 
-        statement.ExecuteNonQuery();
+            var paramGuid = statement.CreateParameter();
+            paramGuid.ParameterName = "uuid";
+            paramGuid.Value = entity.Id.ToString();
+            statement.Parameters.Add(paramGuid);
+            var paramName = statement.CreateParameter();
+            paramName.ParameterName = "name";
+            paramName.Value = entity.RaceName;
+            statement.Parameters.Add(paramName);
+            var paramClass = statement.CreateParameter();
+            paramClass.ParameterName = "class";
+            paramClass.Value = entity.RaceClass;
+            statement.Parameters.Add(paramClass);
+
+            statement.ExecuteNonQuery();
+        } catch (Exception ex)
+        {
+            Program.log.Error($"Error executing query: {ex.Message}");
+        }
     }
 
     public override void Update(Race entity)
     {
-        const string sql = "UPDATE race SET name = @name, class = @class WHERE uuid = @uuid";
-        using var connection = DbUtils.GetConnection();
-        using var statement = connection.CreateCommand();
-        statement.CommandText = sql;
-        
-        var paramName = statement.CreateParameter();
-        paramName.ParameterName = "name";
-        paramName.Value = entity.RaceName;
-        statement.Parameters.Add(paramName);
-        var paramClass = statement.CreateParameter();
-        paramClass.ParameterName = "class";
-        paramClass.Value = entity.RaceClass;
-        statement.Parameters.Add(paramClass);
-        var paramGuid = statement.CreateParameter();
-        paramGuid.ParameterName = "uuid";
-        paramGuid.Value = entity.Id.ToString();
-        statement.Parameters.Add(paramGuid);
+        try
+        {
+            const string sql = "UPDATE race SET name = @name, class = @class WHERE uuid = @uuid";
+            using var connection = DbUtils.GetConnection();
+            using var statement = connection.CreateCommand();
+            statement.CommandText = sql;
 
-        statement.ExecuteNonQuery();
+            var paramName = statement.CreateParameter();
+            paramName.ParameterName = "name";
+            paramName.Value = entity.RaceName;
+            statement.Parameters.Add(paramName);
+            var paramClass = statement.CreateParameter();
+            paramClass.ParameterName = "class";
+            paramClass.Value = entity.RaceClass;
+            statement.Parameters.Add(paramClass);
+            var paramGuid = statement.CreateParameter();
+            paramGuid.ParameterName = "uuid";
+            paramGuid.Value = entity.Id.ToString();
+            statement.Parameters.Add(paramGuid);
+
+            statement.ExecuteNonQuery();
+        } catch (Exception ex)
+        {
+            Program.log.Error($"Error executing query: {ex.Message}");
+        }
     }
 
     protected override Race ExtractEntity(IDataReader reader)

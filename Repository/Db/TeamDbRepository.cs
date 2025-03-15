@@ -8,40 +8,52 @@ public class TeamDbRepository() : AbstractDbRepository<Team, Guid>("team")
 {
     public override void Add(Team entity)
     {
-        const string sql = "INSERT INTO team (uuid, name) VALUES (@uuid, @name)";
-        using var connection = DbUtils.GetConnection();
-        using var statement = connection.CreateCommand();
-        statement.CommandText = sql;
-        
-        var paramGuid = statement.CreateParameter();
-        paramGuid.ParameterName = "uuid";
-        paramGuid.Value = entity.Id.ToString();
-        statement.Parameters.Add(paramGuid);
-        var paramName = statement.CreateParameter();
-        paramName.ParameterName = "name";
-        paramName.Value = entity.Name;
-        statement.Parameters.Add(paramName);
+        try
+        {
+            const string sql = "INSERT INTO team (uuid, name) VALUES (@uuid, @name)";
+            using var connection = DbUtils.GetConnection();
+            using var statement = connection.CreateCommand();
+            statement.CommandText = sql;
 
-        statement.ExecuteNonQuery();
+            var paramGuid = statement.CreateParameter();
+            paramGuid.ParameterName = "uuid";
+            paramGuid.Value = entity.Id.ToString();
+            statement.Parameters.Add(paramGuid);
+            var paramName = statement.CreateParameter();
+            paramName.ParameterName = "name";
+            paramName.Value = entity.Name;
+            statement.Parameters.Add(paramName);
+
+            statement.ExecuteNonQuery();
+        } catch (Exception ex)
+        {
+            Program.log.Error($"Error executing query: {ex.Message}");
+        }
     }
 
     public override void Update(Team entity)
     {
-        const string sql = "UPDATE team SET name = @name WHERE uuid = @uuid";
-        using var connection = DbUtils.GetConnection();
-        using var statement = connection.CreateCommand();
-        statement.CommandText = sql;
-        
-        var paramName = statement.CreateParameter();
-        paramName.ParameterName = "name";
-        paramName.Value = entity.Name;
-        statement.Parameters.Add(paramName);
-        var paramGuid = statement.CreateParameter();
-        paramGuid.ParameterName = "uuid";
-        paramGuid.Value = entity.Id.ToString();
-        statement.Parameters.Add(paramGuid);
-        
-        statement.ExecuteNonQuery();
+        try
+        {
+            const string sql = "UPDATE team SET name = @name WHERE uuid = @uuid";
+            using var connection = DbUtils.GetConnection();
+            using var statement = connection.CreateCommand();
+            statement.CommandText = sql;
+
+            var paramName = statement.CreateParameter();
+            paramName.ParameterName = "name";
+            paramName.Value = entity.Name;
+            statement.Parameters.Add(paramName);
+            var paramGuid = statement.CreateParameter();
+            paramGuid.ParameterName = "uuid";
+            paramGuid.Value = entity.Id.ToString();
+            statement.Parameters.Add(paramGuid);
+
+            statement.ExecuteNonQuery();
+        } catch (Exception ex)
+        {
+            Program.log.Error($"Error executing query: {ex.Message}");
+        }
     }
 
     protected override Team ExtractEntity(IDataReader reader)

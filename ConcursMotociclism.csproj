@@ -9,8 +9,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="log4net" Version="3.0.4" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0-preview.1.25081.1" />
       <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0-preview.1.25080.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="log4net.config">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

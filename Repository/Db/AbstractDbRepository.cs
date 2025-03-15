@@ -18,14 +18,26 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
     
     protected IEnumerable<TE> GetEntitiesByField(string fieldName, object fieldValue)
     {
-        var connection = DbUtils.GetConnection();
-        var queryCommand = connection.CreateCommand();
-        queryCommand.CommandText = $"SELECT * FROM {TableName} WHERE {fieldName} = @value";
-        var paramValue = queryCommand.CreateParameter();
-        paramValue.ParameterName = "@value";
-        paramValue.Value = fieldValue;
-        queryCommand.Parameters.Add(paramValue);
-        var reader = queryCommand.ExecuteReader();
+        IDataReader reader = null;
+        try
+        {
+            var connection = DbUtils.GetConnection();
+            var queryCommand = connection.CreateCommand();
+            queryCommand.CommandText = $"SELECT * FROM {TableName} WHERE {fieldName} = @value";
+            var paramValue = queryCommand.CreateParameter();
+            paramValue.ParameterName = "@value";
+            paramValue.Value = fieldValue;
+            queryCommand.Parameters.Add(paramValue);
+            reader = queryCommand.ExecuteReader();
+        }
+        catch (Exception ex)
+        {
+            Program.log.Error($"Error executing query: {ex.Message}");
+        }
+        if (reader == null)
+        {
+            yield break;
+        }
         while (reader.Read())
         {
             yield return ExtractEntity(reader);
@@ -34,27 +46,45 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
 
     public TE Get(TId id)
     {
-        var connection = DbUtils.GetConnection();
-        var queryCommand = connection.CreateCommand();
-        queryCommand.CommandText = $"SELECT * FROM {TableName} WHERE uuid = @id";
-        
-        var paramGuid = queryCommand.CreateParameter();
-        paramGuid.ParameterName = "@id";
-        paramGuid.Value = id.ToString();
-        queryCommand.Parameters.Add(paramGuid);
-        
-        
-        var reader = queryCommand.ExecuteReader();
-        reader.Read();
-        return ExtractEntity(reader);
+        try
+        {
+            var connection = DbUtils.GetConnection();
+            var queryCommand = connection.CreateCommand();
+            queryCommand.CommandText = $"SELECT * FROM {TableName} WHERE uuid = @id";
+
+            var paramGuid = queryCommand.CreateParameter();
+            paramGuid.ParameterName = "@id";
+            paramGuid.Value = id.ToString();
+            queryCommand.Parameters.Add(paramGuid);
+
+
+            var reader = queryCommand.ExecuteReader();
+            reader.Read();
+            return ExtractEntity(reader);
+        } catch(Exception ex)
+        {
+            Program.log.Error($"Error executing query: {ex.Message}");
+            return null;
+        }
     }
 
     public IEnumerable<TE> GetAll()
     {
-        var connection = DbUtils.GetConnection();
-        var queryCommand = connection.CreateCommand();
-        queryCommand.CommandText = $"SELECT * FROM {TableName}";
-        var reader = queryCommand.ExecuteReader();
+        IDataReader reader = null;
+        try
+        {
+            var connection = DbUtils.GetConnection();
+            var queryCommand = connection.CreateCommand();
+            queryCommand.CommandText = $"SELECT * FROM {TableName}";
+            reader = queryCommand.ExecuteReader();
+        } catch (Exception ex)
+        {
+            Program.log.Error($"Error executing query: {ex.Message}");
+        }
+        if (reader == null)
+        {
+            yield break;
+        }
         while (reader.Read())
         {
             yield return ExtractEntity(reader);
@@ -64,13 +94,19 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
 
     public void Remove(TId id)
     {
-        var connection = DbUtils.GetConnection();
-        var queryDelete = connection.CreateCommand();
-        queryDelete.CommandText = $"DELETE FROM {TableName} WHERE uuid = @id";
-        var paramGuid = queryDelete.CreateParameter();
-        paramGuid.ParameterName = "@id";
-        paramGuid.Value = id.ToString();
-        queryDelete.Parameters.Add(paramGuid);
-        queryDelete.ExecuteNonQuery();
+        try
+        {
+            var connection = DbUtils.GetConnection();
+            var queryDelete = connection.CreateCommand();
+            queryDelete.CommandText = $"DELETE FROM {TableName} WHERE uuid = @id";
+            var paramGuid = queryDelete.CreateParameter();
+            paramGuid.ParameterName = "@id";
+            paramGuid.Value = id.ToString();
+            queryDelete.Parameters.Add(paramGuid);
+            queryDelete.ExecuteNonQuery();
+        } catch (Exception ex)
+        {
+            Program.log.Error($"Error executing query: {ex.Message}");
+        }
     }
 }
