@@ -2,7 +2,7 @@ using ConcursMotociclism.domain;
 
 namespace ConcursMotociclism.Repository;
 
-public interface IRepositoryInterface<TE, TId> where TE : Entity<TId>
+public interface IRepository<TE, in TId> where TE : Entity<TId>
 {
     void Add(TE entity);
 
@@ -12,5 +12,5 @@ public interface IRepositoryInterface<TE, TId> where TE : Entity<TId>
 
     void Update(TE entity);
 
-    void Remove(Guid id);
+    void Remove(TId id);
 }
