@@ -1,13 +1,16 @@
 using System.Data;
 using ConcursMotociclism.domain;
+using log4net;
 using Microsoft.Data.Sqlite;
 
 namespace ConcursMotociclism.Repository.Db;
 
 public class RaceDbRepository() : AbstractDbRepository<Race, Guid>("race"), IRaceRepository
 {
+    private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
     public override void Add(Race entity)
     {
+        logger.Info("Adding new Race to database");
         try
         {
             const string sql = "INSERT INTO race (uuid, name, class) VALUES (@uuid, @name, @class)";
@@ -31,12 +34,18 @@ public class RaceDbRepository() : AbstractDbRepository<Race, Guid>("race"), IRac
             statement.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
+    }
+
+    public override Race Get(Guid id)
+    {
+        return base.Get(id, "uuid");
     }
 
     public override void Update(Race entity)
     {
+        logger.Info("Updating Race with id:" + entity.Id);
         try
         {
             const string sql = "UPDATE race SET name = @name, class = @class WHERE uuid = @uuid";
@@ -60,7 +69,7 @@ public class RaceDbRepository() : AbstractDbRepository<Race, Guid>("race"), IRac
             statement.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
     }
 
@@ -70,7 +79,8 @@ public class RaceDbRepository() : AbstractDbRepository<Race, Guid>("race"), IRac
     }
 
     public IEnumerable<Race> GetRacesByClass(int raceClass)
-    {
+    {   
+        logger.Info("Getting Races by class " + raceClass);
         return GetEntitiesByField("class", raceClass);
     }
 }

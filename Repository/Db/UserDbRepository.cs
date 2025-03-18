@@ -1,13 +1,25 @@
 using System.Data;
 using ConcursMotociclism.domain;
+using log4net;
 using Microsoft.Data.Sqlite;
 
 namespace ConcursMotociclism.Repository.Db;
 
-public class UserDbRepository() : AbstractDbRepository<User, Guid>("user")
+public class UserDbRepository() : AbstractDbRepository<User, Guid>("user"), IUserRepository
 {
+    private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
+    
+    
+    
+    public override User Get(Guid id)
+    {
+        return base.Get(id, "uuid");
+    }
+    
+    
     public override void Add(User entity)
     {
+        logger.Info("Adding user to database");
         try 
         {
             const string sql = "INSERT INTO user (uuid, username, password_hash) VALUES (@uuid, @username, @password)";
@@ -31,12 +43,13 @@ public class UserDbRepository() : AbstractDbRepository<User, Guid>("user")
             statement.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
     }
 
     public override void Update(User entity)
     {
+        logger.Info("Updating user with id:" + entity.Id);
         try
         {
             const string sql = "UPDATE user SET username = @username, password_hash = @password WHERE uuid = @uuid";
@@ -60,7 +73,7 @@ public class UserDbRepository() : AbstractDbRepository<User, Guid>("user")
             statement.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
     }
 

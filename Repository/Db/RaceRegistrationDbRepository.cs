@@ -1,13 +1,24 @@
 using System.Data;
 using ConcursMotociclism.domain;
+using log4net;
 using Microsoft.Data.Sqlite;
 
 namespace ConcursMotociclism.Repository.Db;
 
-public class RaceRegistrationDbRepository() : AbstractDbRepository<RaceRegistration, Guid>("raceregistration"), IRaceRegistrationRepository
+public class RaceRegistrationDbRepository(IRaceRepository raceRepository, IRacerRepository racerRepository) : AbstractDbRepository<RaceRegistration, Guid>("raceregistration"), IRaceRegistrationRepository
 {
+    private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
+    
+    
+    public override RaceRegistration Get(Guid id)
+    {
+        return base.Get(id, "uuid");
+    }
+    
+    
     public override void Add(RaceRegistration entity)
     {
+        logger.Info("Adding new RaceRegistration to database");
         try
         {
             const string sql =
@@ -36,12 +47,13 @@ public class RaceRegistrationDbRepository() : AbstractDbRepository<RaceRegistrat
             statement.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
     }
 
     public override void Update(RaceRegistration entity)
     {
+        logger.Info("Updating RaceRegistration with id:" + entity.Id);
         try
         {
             const string sql =
@@ -70,14 +82,14 @@ public class RaceRegistrationDbRepository() : AbstractDbRepository<RaceRegistrat
             statement.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
     }
 
     protected override RaceRegistration ExtractEntity(IDataReader reader)
     {
-        var race = new RaceDbRepository().Get(reader.GetGuid(1));
-        var racer = new RacerDbRepository().Get(reader.GetGuid(2));
+        var race = raceRepository.Get(reader.GetGuid(1));
+        var racer = racerRepository.Get(reader.GetGuid(2));
         return new RaceRegistration(reader.GetGuid(0), race, racer, reader.GetInt32(3));
     }
 

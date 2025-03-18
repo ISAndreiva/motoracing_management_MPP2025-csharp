@@ -1,5 +1,6 @@
 using System.Data;
 using ConcursMotociclism.domain;
+using log4net;
 using Microsoft.Data.Sqlite;
 
 namespace ConcursMotociclism.Repository.Db;
@@ -7,6 +8,7 @@ namespace ConcursMotociclism.Repository.Db;
 public abstract class AbstractDbRepository<TE, TId>(string tableName) : IRepository<TE, TId>
     where TE : Entity<TId>
 {
+    private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
     protected DbUtils DbUtils { get; set; } = new DbUtils();
     protected string TableName = tableName;
 
@@ -18,6 +20,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
     
     protected IEnumerable<TE> GetEntitiesByField(string fieldName, object fieldValue)
     {
+        logger.Info("Getting entities by field: " + fieldName + " with value:" + fieldValue);
         IDataReader reader = null;
         try
         {
@@ -32,7 +35,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
         }
         catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
         if (reader == null)
         {
@@ -44,32 +47,35 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
         }
     }
 
-    public TE Get(TId id)
+    public abstract TE Get(TId id);
+
+    protected TE Get(TId id, string fieldName)
     {
+        logger.Info("Getting entity by id: " + id);
         try
         {
-            var connection = DbUtils.GetConnection();
+            var connection = DbUtils.GetConnection(); 
             var queryCommand = connection.CreateCommand();
-            queryCommand.CommandText = $"SELECT * FROM {TableName} WHERE uuid = @id";
+            queryCommand.CommandText = $"SELECT * FROM {TableName} WHERE {fieldName} = @id";
 
             var paramGuid = queryCommand.CreateParameter();
             paramGuid.ParameterName = "@id";
             paramGuid.Value = id.ToString();
             queryCommand.Parameters.Add(paramGuid);
-
-
+            
             var reader = queryCommand.ExecuteReader();
             reader.Read();
             return ExtractEntity(reader);
         } catch(Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
             return null;
         }
     }
 
     public IEnumerable<TE> GetAll()
     {
+        logger.Info("Getting all entities from " + tableName);
         IDataReader reader = null;
         try
         {
@@ -79,7 +85,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
             reader = queryCommand.ExecuteReader();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
         if (reader == null)
         {
@@ -94,6 +100,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
 
     public void Remove(TId id)
     {
+        logger.Info("Removing entity with id: " + id);
         try
         {
             var connection = DbUtils.GetConnection();
@@ -106,7 +113,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
             queryDelete.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
     }
 }

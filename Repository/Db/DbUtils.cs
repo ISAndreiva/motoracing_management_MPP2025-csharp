@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.Data.Sqlite;
 using System.Configuration;
+using log4net;
 
 namespace ConcursMotociclism.Repository;
 
@@ -8,10 +9,11 @@ namespace ConcursMotociclism.Repository;
 public class DbUtils()
 {
     private IDbConnection _instance = null;
+    private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
     
     private IDbConnection GetNewConnection()
     {
-        Program.log.Info("Creating new connection");
+        logger.Info("Creating new connection");
         var urlLin = ConfigurationManager.ConnectionStrings["linux"].ConnectionString;
         var urlWin = ConfigurationManager.ConnectionStrings["windows"].ConnectionString;
 

@@ -1,13 +1,23 @@
 using System.Data;
 using ConcursMotociclism.domain;
+using log4net;
 using Microsoft.Data.Sqlite;
 
 namespace ConcursMotociclism.Repository.Db;
 
-public class TeamDbRepository() : AbstractDbRepository<Team, Guid>("team")
+public class TeamDbRepository() : AbstractDbRepository<Team, Guid>("team"), ITeamRepository
 {
+    private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
+    
+    
+    public override Team Get(Guid id)
+    {
+        return base.Get(id, "uuid");
+    }
+    
     public override void Add(Team entity)
     {
+        logger.Info("Adding team to database");
         try
         {
             const string sql = "INSERT INTO team (uuid, name) VALUES (@uuid, @name)";
@@ -27,12 +37,13 @@ public class TeamDbRepository() : AbstractDbRepository<Team, Guid>("team")
             statement.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
     }
 
     public override void Update(Team entity)
     {
+        logger.Info("Updating team with id:" + entity.Id);
         try
         {
             const string sql = "UPDATE team SET name = @name WHERE uuid = @uuid";
@@ -52,7 +63,7 @@ public class TeamDbRepository() : AbstractDbRepository<Team, Guid>("team")
             statement.ExecuteNonQuery();
         } catch (Exception ex)
         {
-            Program.log.Error($"Error executing query: {ex.Message}");
+            logger.Error($"Error executing query: {ex.Message}");
         }
     }
 
