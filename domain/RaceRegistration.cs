@@ -4,11 +4,10 @@ public class RaceRegistration(Guid id, Race race, Racer racer, int raceClass) : 
 {
     public Race Race { get; } = race;
     public Racer Racer { get; } = racer;
-    public int RaceClass { get; } = raceClass;
 
     protected bool Equals(RaceRegistration other)
     {
-        return Race.Equals(other.Race) && Racer.Equals(other.Racer) && RaceClass == other.RaceClass;
+        return Race.Equals(other.Race) && Racer.Equals(other.Racer);
     }
 
     public override bool Equals(object? obj)
@@ -21,6 +20,6 @@ public class RaceRegistration(Guid id, Race race, Racer racer, int raceClass) : 
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Race, Racer, RaceClass);
+        return HashCode.Combine(Race, Racer);
     }
 }
