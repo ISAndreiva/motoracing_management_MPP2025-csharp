@@ -113,6 +113,6 @@ public class RaceDbRepository() : AbstractDbRepository<Race, Guid>("race"), IRac
     public Race GetRaceByName(string raceName)
     {
         using var enumerator = GetEntitiesByField("name", raceName).GetEnumerator();
-        return enumerator.MoveNext() ? enumerator.Current : null;
+        return (enumerator.MoveNext() ? enumerator.Current : null)!;
     }
 }

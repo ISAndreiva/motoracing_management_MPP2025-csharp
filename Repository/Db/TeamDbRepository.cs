@@ -103,6 +103,6 @@ public class TeamDbRepository() : AbstractDbRepository<Team, Guid>("team"), ITea
     public Team getTeamByName(string teamName)
     {
         using var enumerator = GetEntitiesByField("name", teamName).GetEnumerator();
-        return enumerator.MoveNext() ? enumerator.Current : null;
+        return (enumerator.MoveNext() ? enumerator.Current : null)!;
     }
 }

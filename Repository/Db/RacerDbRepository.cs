@@ -83,7 +83,7 @@ public class RacerDbRepository(ITeamRepository teamRepository) : AbstractDbRepos
     public Racer GetRacerByCnp(string cnp)
     {
         using var enumerator = GetEntitiesByField("cnp", cnp).GetEnumerator();
-        return enumerator.MoveNext() ? enumerator.Current : null;
+        return (enumerator.MoveNext() ? enumerator.Current : null)!;
     }
 
     protected override Racer ExtractEntity(IDataReader reader)

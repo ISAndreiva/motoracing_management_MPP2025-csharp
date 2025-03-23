@@ -19,10 +19,6 @@ public static class Program
         var raceDbRepository = new RaceDbRepository();
         var racerDbRepository = new RacerDbRepository(teamDbRepository);
         var raceRegistrationDbRepository = new RaceRegistrationDbRepository(raceDbRepository, racerDbRepository);
-
-        foreach (var VARIABLE in raceRegistrationDbRepository.GetRegistrationsByRace(Guid.Parse("f58e3001-6c97-4f21-9602-91024bb3fccf")))
-        {
-            Console.WriteLine(VARIABLE.Race.RaceName + " " + VARIABLE.RaceClass);
-        }
+        
     }
 }

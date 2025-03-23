@@ -22,7 +22,7 @@ public class RaceRegistrationDbRepository(IRaceRepository raceRepository, IRacer
         try
         {
             const string sql =
-                "INSERT INTO raceregistration (uuid, race, racer, class) VALUES (@uuid, @race, @racer, @class)";
+                "INSERT INTO raceregistration (uuid, race, racer) VALUES (@uuid, @race, @racer)";
             using var connection = DbUtils.GetConnection();
             using var statement = connection.CreateCommand();
             statement.CommandText = sql;
@@ -39,10 +39,6 @@ public class RaceRegistrationDbRepository(IRaceRepository raceRepository, IRacer
             paramRacer.ParameterName = "racer";
             paramRacer.Value = entity.Racer;
             statement.Parameters.Add(paramRacer);
-            var paramClass = statement.CreateParameter();
-            paramClass.ParameterName = "class";
-            paramClass.Value = entity.RaceClass;
-            statement.Parameters.Add(paramClass);
 
             statement.ExecuteNonQuery();
         } catch (Exception ex)
@@ -57,7 +53,7 @@ public class RaceRegistrationDbRepository(IRaceRepository raceRepository, IRacer
         try
         {
             const string sql =
-                "UPDATE raceregistration SET race = @race, racer = @racer, class = @class WHERE uuid = @uuid";
+                "UPDATE raceregistration SET race = @race, racer = @racer WHERE uuid = @uuid";
             using var connection = DbUtils.GetConnection();
             using var statement = connection.CreateCommand();
             statement.CommandText = sql;
@@ -70,10 +66,6 @@ public class RaceRegistrationDbRepository(IRaceRepository raceRepository, IRacer
             paramRacer.ParameterName = "racer";
             paramRacer.Value = entity.Racer;
             statement.Parameters.Add(paramRacer);
-            var paramClass = statement.CreateParameter();
-            paramClass.ParameterName = "class";
-            paramClass.Value = entity.RaceClass;
-            statement.Parameters.Add(paramClass);
             var paramGuid = statement.CreateParameter();
             paramGuid.ParameterName = "uuid";
             paramGuid.Value = entity.Id.ToString();
@@ -90,7 +82,7 @@ public class RaceRegistrationDbRepository(IRaceRepository raceRepository, IRacer
     {
         var race = raceRepository.Get(reader.GetGuid(1));
         var racer = racerRepository.Get(reader.GetGuid(2));
-        return new RaceRegistration(reader.GetGuid(0), race, racer, reader.GetInt32(3));
+        return new RaceRegistration(reader.GetGuid(0), race, racer);
     }
 
     public IEnumerable<RaceRegistration> GetRegistrationsByRace(Guid raceId)

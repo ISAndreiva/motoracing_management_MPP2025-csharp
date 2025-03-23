@@ -9,11 +9,11 @@ namespace ConcursMotociclism.Repository;
 public class DbUtils()
 {
     private IDbConnection _instance = null;
-    private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
+    private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
     
     private IDbConnection GetNewConnection()
     {
-        logger.Info("Creating new connection");
+        Logger.Info("Creating new connection");
         var urlLin = ConfigurationManager.ConnectionStrings["linux"].ConnectionString;
         var urlWin = ConfigurationManager.ConnectionStrings["windows"].ConnectionString;
 
