@@ -83,4 +83,36 @@ public class RaceDbRepository() : AbstractDbRepository<Race, Guid>("race"), IRac
         logger.Info("Getting Races by class " + raceClass);
         return GetEntitiesByField("class", raceClass);
     }
+
+    public IEnumerable<int> GetUsedRaceClasses()
+    {
+        logger.Info("Getting all used race classes");
+        IDataReader reader = null;
+        try
+        {
+            var sql = "SELECT DISTINCT class from race";
+            using var connection = DbUtils.GetConnection();
+            using var statement = connection.CreateCommand();
+            statement.CommandText = sql;
+            reader = statement.ExecuteReader();
+        }
+        catch (Exception e)
+        {
+            logger.Error($"Error executing query: {e.Message}");
+        }
+        if (reader == null)
+        {
+            yield break;
+        }
+        while (reader.Read())
+        {
+            yield return reader.GetInt32(0);
+        }
+    }
+
+    public Race GetRaceByName(string raceName)
+    {
+        using var enumerator = GetEntitiesByField("name", raceName).GetEnumerator();
+        return enumerator.MoveNext() ? enumerator.Current : null;
+    }
 }

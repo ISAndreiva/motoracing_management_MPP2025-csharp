@@ -77,6 +77,12 @@ public class UserDbRepository() : AbstractDbRepository<User, Guid>("user"), IUse
         }
     }
 
+    public User GetUserByUsername(string username)
+    {
+        using var enumerator = GetEntitiesByField("username", username).GetEnumerator();
+        return enumerator.MoveNext() ? enumerator.Current : null;
+    }
+
     protected override User ExtractEntity(IDataReader reader)
     {
         return new User(reader.GetGuid(0), reader.GetString(1), reader.GetString(2));

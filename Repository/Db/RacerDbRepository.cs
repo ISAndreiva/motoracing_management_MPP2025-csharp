@@ -80,6 +80,12 @@ public class RacerDbRepository(ITeamRepository teamRepository) : AbstractDbRepos
         return GetEntitiesByField("team", teamId.ToString());
     }
 
+    public Racer GetRacerByCnp(string cnp)
+    {
+        using var enumerator = GetEntitiesByField("cnp", cnp).GetEnumerator();
+        return enumerator.MoveNext() ? enumerator.Current : null;
+    }
+
     protected override Racer ExtractEntity(IDataReader reader)
     {
         var team = teamRepository.Get(reader.GetGuid(3));

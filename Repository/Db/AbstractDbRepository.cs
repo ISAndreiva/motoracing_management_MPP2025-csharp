@@ -10,7 +10,6 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
 {
     private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
     protected DbUtils DbUtils { get; set; } = new DbUtils();
-    protected string TableName = tableName;
 
     public abstract void Add(TE entity);
     
@@ -26,7 +25,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
         {
             var connection = DbUtils.GetConnection();
             var queryCommand = connection.CreateCommand();
-            queryCommand.CommandText = $"SELECT * FROM {TableName} WHERE {fieldName} = @value";
+            queryCommand.CommandText = $"SELECT * FROM {tableName} WHERE {fieldName} = @value";
             var paramValue = queryCommand.CreateParameter();
             paramValue.ParameterName = "@value";
             paramValue.Value = fieldValue;
@@ -56,7 +55,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
         {
             var connection = DbUtils.GetConnection(); 
             var queryCommand = connection.CreateCommand();
-            queryCommand.CommandText = $"SELECT * FROM {TableName} WHERE {fieldName} = @id";
+            queryCommand.CommandText = $"SELECT * FROM {tableName} WHERE {fieldName} = @id";
 
             var paramGuid = queryCommand.CreateParameter();
             paramGuid.ParameterName = "@id";
@@ -81,7 +80,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
         {
             var connection = DbUtils.GetConnection();
             var queryCommand = connection.CreateCommand();
-            queryCommand.CommandText = $"SELECT * FROM {TableName}";
+            queryCommand.CommandText = $"SELECT * FROM {tableName}";
             reader = queryCommand.ExecuteReader();
         } catch (Exception ex)
         {
@@ -105,7 +104,7 @@ public abstract class AbstractDbRepository<TE, TId>(string tableName) : IReposit
         {
             var connection = DbUtils.GetConnection();
             var queryDelete = connection.CreateCommand();
-            queryDelete.CommandText = $"DELETE FROM {TableName} WHERE uuid = @id";
+            queryDelete.CommandText = $"DELETE FROM {tableName} WHERE uuid = @id";
             var paramGuid = queryDelete.CreateParameter();
             paramGuid.ParameterName = "@id";
             paramGuid.Value = id.ToString();

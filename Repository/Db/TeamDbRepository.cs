@@ -71,4 +71,38 @@ public class TeamDbRepository() : AbstractDbRepository<Team, Guid>("team"), ITea
     {
         return new Team(reader.GetGuid(0), reader.GetString(1));
     }
+
+    public IEnumerable<Team> getTeamsByPartialName(string partialName)
+    {
+        var sql = "SELECT * FROM team WHERE name LIKE @name";
+        IDataReader reader = null;
+        try
+        {
+            var connection = DbUtils.GetConnection();
+            var queryCommand = connection.CreateCommand();
+            queryCommand.CommandText = sql;
+            var param = queryCommand.CreateParameter();
+            param.ParameterName = "@name";
+            param.Value = "%" + partialName + "%";
+            queryCommand.Parameters.Add(param);
+            reader = queryCommand.ExecuteReader();
+        } catch (Exception ex)
+        {
+            logger.Error($"Error executing query: {ex.Message}");
+        }
+        if (reader == null)
+        {
+            yield break;
+        }
+        while (reader.Read())
+        {
+            yield return ExtractEntity(reader);
+        }
+    }
+
+    public Team getTeamByName(string teamName)
+    {
+        using var enumerator = GetEntitiesByField("name", teamName).GetEnumerator();
+        return enumerator.MoveNext() ? enumerator.Current : null;
+    }
 }
