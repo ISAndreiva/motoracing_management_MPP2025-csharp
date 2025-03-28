@@ -91,17 +91,14 @@ public class RaceDbRepository() : AbstractDbRepository<Race, Guid>("race"), IRac
         try
         {
             var sql = "SELECT DISTINCT class from race";
-            using var connection = DbUtils.GetConnection();
-            using var statement = connection.CreateCommand();
+            var connection = DbUtils.GetConnection();
+            var statement = connection.CreateCommand();
             statement.CommandText = sql;
             reader = statement.ExecuteReader();
         }
         catch (Exception e)
         {
             logger.Error($"Error executing query: {e.Message}");
-        }
-        if (reader == null)
-        {
             yield break;
         }
         while (reader.Read())

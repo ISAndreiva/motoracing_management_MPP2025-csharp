@@ -20,7 +20,7 @@ public class RacerDbRepository(ITeamRepository teamRepository) : AbstractDbRepos
         logger.Info("Adding Racer to database");
         try
         {
-            const string sql = "INSERT INTO racer (uuid, name, team) VALUES (@uuid, @name, @team)";
+            const string sql = "INSERT INTO racer (uuid, name, cnp, team) VALUES (@uuid, @name, @cnp, @team)";
             using var connection = DbUtils.GetConnection();
             using var statement = connection.CreateCommand();
             statement.CommandText = sql;
@@ -33,6 +33,10 @@ public class RacerDbRepository(ITeamRepository teamRepository) : AbstractDbRepos
             paramName.ParameterName = "name";
             paramName.Value = entity.Name;
             statement.Parameters.Add(paramName);
+            var paramCnp = statement.CreateParameter();
+            paramCnp.ParameterName = "cnp";
+            paramCnp.Value = entity.Cnp;
+            statement.Parameters.Add(paramCnp);
             var paramTeam = statement.CreateParameter();
             paramTeam.ParameterName = "team";
             paramTeam.Value = entity.Team.Id.ToString();

@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using ConcursMotociclism.domain;
 using ConcursMotociclism.Repository;
+using ConcursMotociclism.Utils;
 using log4net;
 
 namespace ConcursMotociclism.Service;
 
-public class Service(IUserRepository userRepository, ITeamRepository teamRepository, IRaceRepository raceRepository, IRacerRepository racerRepository, IRaceRegistrationRepository raceRegistrationRepository)
+public class Service(IUserRepository userRepository, ITeamRepository teamRepository, IRaceRepository raceRepository, IRacerRepository racerRepository, IRaceRegistrationRepository raceRegistrationRepository) : Observable
 {
     private readonly UserController _userController = new UserController(userRepository);
     private readonly TeamController _teamController = new TeamController(teamRepository);
@@ -91,5 +92,6 @@ public class Service(IUserRepository userRepository, ITeamRepository teamReposit
         }
         var race = _raceController.GetRaceByName(raceName);
         _raceRegistrationController.AddRegistration(new RaceRegistration(Guid.NewGuid(), race, racer));
+        notifyObservers();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using ConcursMotociclism.domain;
+using ConcursMotociclism.Gui;
 using ConcursMotociclism.Repository.Db;
 using log4net;
 using log4net.Config;
@@ -19,6 +20,11 @@ public static class Program
         var raceDbRepository = new RaceDbRepository();
         var racerDbRepository = new RacerDbRepository(teamDbRepository);
         var raceRegistrationDbRepository = new RaceRegistrationDbRepository(raceDbRepository, racerDbRepository);
+        var service = new Service.Service(userDbRepository, teamDbRepository, raceDbRepository, racerDbRepository, raceRegistrationDbRepository);
         
+        ApplicationConfiguration.Initialize();
+        var loginView = new LoginView();
+        loginView.SetService(service);
+        Application.Run(loginView);
     }
 }

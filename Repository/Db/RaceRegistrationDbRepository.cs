@@ -33,11 +33,11 @@ public class RaceRegistrationDbRepository(IRaceRepository raceRepository, IRacer
             statement.Parameters.Add(paramGuid);
             var paramRace = statement.CreateParameter();
             paramRace.ParameterName = "race";
-            paramRace.Value = entity.Race;
+            paramRace.Value = entity.Race.Id.ToString();
             statement.Parameters.Add(paramRace);
             var paramRacer = statement.CreateParameter();
             paramRacer.ParameterName = "racer";
-            paramRacer.Value = entity.Racer;
+            paramRacer.Value = entity.Racer.Id.ToString();
             statement.Parameters.Add(paramRacer);
 
             statement.ExecuteNonQuery();

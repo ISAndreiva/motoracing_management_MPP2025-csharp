@@ -8,7 +8,7 @@ namespace ConcursMotociclism.Repository;
 
 public class DbUtils()
 {
-    private IDbConnection _instance = null;
+    private static IDbConnection _instance = null;
     private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
     
     private IDbConnection GetNewConnection()
@@ -18,6 +18,7 @@ public class DbUtils()
         var urlWin = ConfigurationManager.ConnectionStrings["windows"].ConnectionString;
 
         var url = Environment.OSVersion.ToString().Contains("Unix") ? urlLin : urlWin;
+        Logger.Info("Using connection string: " + url);
         var connection = new SqliteConnection(url);
         return connection;
     }
