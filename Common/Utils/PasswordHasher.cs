@@ -7,7 +7,7 @@ namespace ConcursMotociclism.Utils
 {
     public class PasswordHasher
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
+        private static readonly ILog Logger = LogManager.GetLogger("PasswordHasher");
 
         public static string HashPassword(string password, string username)
         {

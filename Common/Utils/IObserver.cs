@@ -1,6 +1,6 @@
 ﻿namespace ConcursMotociclism.Utils;
 
-public interface Observer
+public interface IObserver
 {
     void update();
 }

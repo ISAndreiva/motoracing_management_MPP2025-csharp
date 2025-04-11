@@ -1,20 +1,21 @@
-﻿using ConcursMotociclism.Utils;
+﻿using ConcursMotociclism.Service;
+using ConcursMotociclism.Utils;
 
 namespace ConcursMotociclism.Gui;
 
-public partial class AdminView : Form, Observer
+public partial class AdminView : Form, IObserver
 {
-    private Service.Service service;
+    private IObservableService service;
     private List<Form> childForms = new List<Form>();
     public AdminView()
     {
         InitializeComponent();
     }
     
-    public void SetService(Service.Service service)
+    public void SetService(IObservableService service)
     {
         this.service = service;
-        this.service.addObserver(this);
+        this.service.RegisterObserver(this);
         SetUpTableControl();
         teamsDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = "Nume" });
         teamsDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = "Clase" });
@@ -121,7 +122,7 @@ public partial class AdminView : Form, Observer
         {
             form.Close();
         }
-        service.removeObserver(this);
+        service.UnregisterObserver(this);
         this.Close();
     }
 

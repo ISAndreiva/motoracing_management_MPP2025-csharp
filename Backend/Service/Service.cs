@@ -6,14 +6,15 @@ using log4net;
 
 namespace ConcursMotociclism.Service;
 
-public class Service(IUserRepository userRepository, ITeamRepository teamRepository, IRaceRepository raceRepository, IRacerRepository racerRepository, IRaceRegistrationRepository raceRegistrationRepository) : Observable
+public class Service(IUserRepository userRepository, ITeamRepository teamRepository, IRaceRepository raceRepository, IRacerRepository racerRepository, IRaceRegistrationRepository raceRegistrationRepository) : IObservableService
 {
     private readonly UserController _userController = new UserController(userRepository);
     private readonly TeamController _teamController = new TeamController(teamRepository);
     private readonly RaceController _raceController = new RaceController(raceRepository);
     private readonly RacerController _racerController = new RacerController(racerRepository);
     private readonly RaceRegistrationController _raceRegistrationController = new RaceRegistrationController(raceRegistrationRepository);
-    private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
+    private static readonly ILog Logger = LogManager.GetLogger("Backend.Service");
+    private readonly List<IObserver> _observers = [];
     
     public bool CheckUserPassword(string username, string password)
     {
@@ -92,6 +93,21 @@ public class Service(IUserRepository userRepository, ITeamRepository teamReposit
         }
         var race = _raceController.GetRaceByName(raceName);
         _raceRegistrationController.AddRegistration(new RaceRegistration(Guid.NewGuid(), race, racer));
-        notifyObservers();
+        NotifyObservers();
+    }
+
+    public void RegisterObserver(IObserver observer)
+    {
+        _observers.Add(observer);
+    }
+
+    public void UnregisterObserver(IObserver observer)
+    {
+        _observers.Remove(observer);
+    }
+
+    public void NotifyObservers()
+    {
+        _observers.ForEach(o => o.update());
     }
 }

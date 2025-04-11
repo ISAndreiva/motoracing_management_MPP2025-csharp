@@ -1,15 +1,17 @@
-﻿namespace ConcursMotociclism.Gui;
+﻿using ConcursMotociclism.Service;
+
+namespace ConcursMotociclism.Gui;
 
 public partial class RegisterView : Form
 {
-    private Service.Service service;
+    private IService service;
     
     public RegisterView()
     {
         InitializeComponent();
     }
     
-    public void setService(Service.Service service)
+    public void setService(IService service)
     {
         this.service = service;
         foreach (var team in this.service.GetAllTeams())

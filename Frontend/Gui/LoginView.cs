@@ -1,17 +1,18 @@
-﻿using ConcursMotociclism.Utils;
+﻿using ConcursMotociclism.Service;
+using ConcursMotociclism.Utils;
 
 namespace ConcursMotociclism.Gui;
 
 public partial class LoginView : Form
 {
-    private Service.Service service;
+    private IObservableService service;
     public LoginView()
     {
         InitializeComponent();
 
     }
     
-    public void SetService(Service.Service service)
+    public void SetService(IObservableService service)
     {
         this.service = service;
     }
