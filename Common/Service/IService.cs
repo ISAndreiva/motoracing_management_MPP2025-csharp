@@ -27,4 +27,6 @@ public interface IService
     public IEnumerable<Race> GetAllRaces();
 
     public void AddRaceRegistration(string racerName, string racerCnp, string teamName, string raceName);
+    
+    public Race GetRaceByName(string raceName);
 }

@@ -93,7 +93,13 @@ public class Service(IUserRepository userRepository, ITeamRepository teamReposit
         }
         var race = _raceController.GetRaceByName(raceName);
         _raceRegistrationController.AddRegistration(new RaceRegistration(Guid.NewGuid(), race, racer));
-        NotifyObservers();
+        NotifyObservers(EventType.RaceRegistration, raceName);
+    }
+
+    public Race GetRaceByName(string raceName)
+    {
+        Logger.Info($"Getting race by name: {raceName}");
+        return _raceController.GetRaceByName(raceName);
     }
 
     public void RegisterObserver(IObserver observer)
@@ -106,8 +112,8 @@ public class Service(IUserRepository userRepository, ITeamRepository teamReposit
         _observers.Remove(observer);
     }
 
-    public void NotifyObservers()
+    public void NotifyObservers(EventType type, object data)
     {
-        _observers.ForEach(o => o.update());
+        _observers.ForEach(o => o.Update(type, data));
     }
 }
