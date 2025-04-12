@@ -2,15 +2,20 @@
 
 namespace ConcursMotociclism.dto;
 
-public class RacerDto(Racer racer)
+public class RacerDto(Guid id, string name, string cnp, TeamDto team)
 {
-    private readonly Guid _id = racer.Id;
-    private readonly string _name = racer.Name;
-    private readonly string _cnp = racer.Cnp;
-    private readonly TeamDto _team = new TeamDto(racer.Team);
+    public Guid Id { get; set; } = id;
+    public string Name { get; set; } = name;
+    public string Cnp { get; set; } = cnp;
+    public TeamDto Team { get; set; } = team;
+
+    public static RacerDto fromRacer(Racer racer)
+    {
+        return new RacerDto(racer.Id, racer.Name, racer.Cnp, TeamDto.FromTeam(racer.Team));
+    }
     
     public Racer ToRacer()
     {
-        return new Racer(_id, _name, _team.ToTeam(), _cnp);
+        return new Racer(Id, Name, Team.ToTeam(), Cnp);
     }
 }

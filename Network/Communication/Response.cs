@@ -1,12 +1,12 @@
 ﻿namespace ConcursMotociclism.Communication;
 
-public class Response(ResponseType responseType, string responseJson)
+public class Response<T>(ResponseType responseType, T responseData)
 {
-    public ResponseType ResponseType { get; } = responseType;
-    public string ResponseJson { get; } = responseJson;
+    public ResponseType ResponseType { get; set; } = responseType;
+    public T ResponseData { get; set; } = responseData;
 
     public override string ToString()
     {
-        return $"Response{{responseType={ResponseType}, responseJson={ResponseJson}}}";
+        return $"Response{{responseType={ResponseType}, responseData={ResponseData}}}";
     }
 }

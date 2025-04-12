@@ -1,12 +1,12 @@
 ﻿namespace ConcursMotociclism.Communication;
 
-public class Request(RequestType requestType, string requestJson)
+public class Request<T>(RequestType requestType, T requestData)
 {
-    public RequestType RequestType { get; } = requestType;
-    public string RequestJson { get; } = requestJson;
+    public RequestType RequestType { get; set; } = requestType;
+    public T RequestData { get; set; } = requestData;
 
     public override string ToString()
     {
-        return $"Request{{requestType={RequestType}, requestJson={RequestJson}}}";
+        return $"Request{{requestType={RequestType}, requestData={RequestData}}}";
     }
 }

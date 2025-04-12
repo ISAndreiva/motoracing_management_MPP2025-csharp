@@ -2,14 +2,19 @@
 
 namespace ConcursMotociclism.dto;
 
-public class RaceRegistrationDto(RaceRegistration raceRegistration)
+public class RaceRegistrationDto(Guid id, RaceDto raceDto, RacerDto racerDto)
 {
-    private readonly Guid _id = raceRegistration.Id;
-    private readonly RaceDto _raceDto = new RaceDto(raceRegistration.Race);
-    private readonly RacerDto _racerDto = new RacerDto(raceRegistration.Racer);
+    public Guid Id { get; set; } = id;
+    public RaceDto RaceDto { get; set; } = raceDto;
+    public RacerDto RacerDto { get; set; } = racerDto;
+
+    public static RaceRegistrationDto FromRaceRegistration(RaceRegistration raceRegistration)
+    {
+        return new RaceRegistrationDto(raceRegistration.Id, RaceDto.fromRace(raceRegistration.Race), RacerDto.fromRacer(raceRegistration.Racer));
+    }
 
     public RaceRegistration ToRaceRegistration()
     {
-        return new RaceRegistration(_id, _raceDto.ToRace(), _racerDto.ToRacer());
+        return new RaceRegistration(Id, RaceDto.ToRace(), RacerDto.ToRacer());
     }
 }
