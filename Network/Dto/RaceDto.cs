@@ -17,4 +17,24 @@ public class RaceDto(Guid id, string raceName, int raceClass)
     {
         return new Race(Id, RaceName, RaceClass);
     }
+    
+    public override string ToString()
+    {
+        return $"id={Id}, raceName={RaceName}, raceClass={RaceClass}";
+    }
+    
+    public static RaceDto FromString(string str)
+    {
+        var parts = str.Split(',');
+        if (parts.Length != 3)
+        {
+            throw new ArgumentException("Invalid string format for RaceDto");
+        }
+
+        var id = Guid.Parse(parts[0].Split('=')[1].Trim());
+        var raceName = parts[1].Split('=')[1].Trim();
+        var raceClass = int.Parse(parts[2].Split('=')[1].Trim());
+
+        return new RaceDto(id, raceName, raceClass);
+    }
 }

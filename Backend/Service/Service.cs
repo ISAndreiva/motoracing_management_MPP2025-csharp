@@ -93,7 +93,7 @@ public class Service(IUserRepository userRepository, ITeamRepository teamReposit
         }
         var race = _raceController.GetRaceByName(raceName);
         _raceRegistrationController.AddRegistration(new RaceRegistration(Guid.NewGuid(), race, racer));
-        NotifyObservers(EventType.RaceRegistration, raceName);
+        NotifyObservers(EventType.RaceRegistration, race);
     }
 
     public Race GetRaceByName(string raceName)

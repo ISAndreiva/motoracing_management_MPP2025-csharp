@@ -1,6 +1,8 @@
 ﻿using System.Net.Sockets;
+using System.Reflection;
 using System.Text.Json;
 using ConcursMotociclism.Communication;
+using ConcursMotociclism.domain;
 using ConcursMotociclism.dto;
 using ConcursMotociclism.Service;
 using ConcursMotociclism.Utils;
@@ -44,6 +46,10 @@ public class ClientWorker : IObserver
                 var request = _reader.ReadLine();
                 Logger.Info($"Received request: {request}");
                 string response = HandleRequest(request);
+                if (string.IsNullOrEmpty(response))
+                {
+                    Logger.Error("Received empty response");
+                }
                 Logger.Info($"Sending response: {response}");
                 SendResponse(response);
             }
@@ -81,6 +87,11 @@ public class ClientWorker : IObserver
 
     private string HandleRequest(string request)
     {
+        if (string.IsNullOrEmpty(request))
+        {
+            Logger.Error("Received empty request");
+            return string.Empty;
+        }
         var type = JsonDocument.Parse(request).RootElement.GetProperty("RequestType").GetInt32();
         if (!Enum.IsDefined(typeof(RequestType), type))
         {
@@ -92,8 +103,14 @@ public class ClientWorker : IObserver
         var response = string.Empty;
         try
         {
-            var method = GetType().GetMethod(function);
+            Logger.Info("Invoking method: " + function);
+            var method = GetType().GetMethod(function, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             response = (string) method?.Invoke(this, new object[] { request });
+        }catch (TargetInvocationException tie)
+        {
+            Logger.Error($"Error handling request: {tie.InnerException?.Message}");
+            Logger.Error($"Stack Trace: {tie.InnerException?.StackTrace}");
+            return JsonSerializer.Serialize(new Response<object>(ResponseType.Error, null));
         }catch (Exception e)
         {
             Logger.Error($"Error handling request: {e.Message}");
@@ -145,7 +162,7 @@ public class ClientWorker : IObserver
         }
 
         var raceClasses = _service.GetUsedRaceClasses().ToList();
-        return JsonSerializer.Serialize(new Response<List<int>>(ResponseType.GetRacesByClass, raceClasses));
+        return JsonSerializer.Serialize(new Response<List<int>>(ResponseType.GetUsedRaceClasses, raceClasses));
     }
 
     private string HandleGetRacersCountForRace(string request) 
@@ -299,13 +316,18 @@ public class ClientWorker : IObserver
             return JsonSerializer.Serialize(new Response<object>(ResponseType.Error, null));
         }
 
-        var racesAndRacersNo = _service.GetAllRaces().ToDictionary(RaceDto.fromRace, race => _service.GetRacersCountForRace(race.Id));
-        return JsonSerializer.Serialize(new Response<Dictionary<RaceDto, int>>(ResponseType.GetRacesAndRacersNo, racesAndRacersNo));
+        var racesAndRacersNo = _service.GetAllRaces().ToDictionary(
+                race => RaceDto.fromRace(race).ToString(),
+                race => _service.GetRacersCountForRace(race.Id)
+            );
+        return JsonSerializer.Serialize(new Response<Dictionary<string, int>>(ResponseType.GetRacesAndRacersNo, racesAndRacersNo));
     }
 
     public void Update(EventType type, object data)
     {
         Logger.Info("Sending update to client");
-        SendResponse(JsonSerializer.Serialize(new Response<object>(ResponseType.Update, data)));
+        if (type == EventType.RaceRegistration)
+            data = RaceDto.fromRace((Race)data);
+        SendResponse(JsonSerializer.Serialize(new Response<Event>(ResponseType.Update, new Event(type, data))));
     }
 }

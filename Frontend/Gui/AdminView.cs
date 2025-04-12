@@ -126,8 +126,9 @@ public partial class AdminView : Form, IObserver
         this.Close();
     }
 
-    public void update()
+
+    public void Update(EventType type, object data)
     {
-        SetUpTableControl();
+        BeginInvoke(SetUpTableControl);
     }
 }
