@@ -14,8 +14,8 @@ public class DbUtils()
     private IDbConnection GetNewConnection()
     {
         Logger.Info("Creating new connection");
-        var urlLin = ConfigurationManager.ConnectionStrings["linux"].ConnectionString;
-        var urlWin = ConfigurationManager.ConnectionStrings["windows"].ConnectionString;
+        var urlLin = ConfigurationManager.ConnectionStrings["linux_db"].ConnectionString;
+        var urlWin = ConfigurationManager.ConnectionStrings["windows_db"].ConnectionString;
 
         var url = Environment.OSVersion.ToString().Contains("Unix") ? urlLin : urlWin;
         Logger.Info("Using connection string: " + url);

@@ -8,5 +8,5 @@ public interface IObservableService : IService
     
     public void UnregisterObserver(IObserver observer);
     
-    protected void NotifyObservers();
+    protected void NotifyObservers(EventType type, object data);
 }

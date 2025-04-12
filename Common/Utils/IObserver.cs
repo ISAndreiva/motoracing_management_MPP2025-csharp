@@ -2,5 +2,5 @@
 
 public interface IObserver
 {
-    void update();
+    void Update(EventType type, object data);
 }
