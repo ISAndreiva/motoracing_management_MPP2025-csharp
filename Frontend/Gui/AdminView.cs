@@ -118,11 +118,6 @@ public partial class AdminView : Form, IObserver
 
     private void logoutButton_Click(object sender, EventArgs e)
     {
-        foreach (var form in childForms)
-        {
-            form.Close();
-        }
-        service.UnregisterObserver(this);
         this.Close();
     }
 
@@ -130,5 +125,14 @@ public partial class AdminView : Form, IObserver
     public void Update(EventType type, object data)
     {
         BeginInvoke(SetUpTableControl);
+    }
+
+    private void AdminView_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        foreach (var form in childForms)
+        {
+            form.Close();
+        }
+        service.UnregisterObserver(this);
     }
 }

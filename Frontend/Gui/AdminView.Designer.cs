@@ -109,6 +109,7 @@ partial class AdminView
         Controls.Add(logoutButton);
         Controls.Add(racesTabControl);
         Text = "AdminView";
+        FormClosing += AdminView_FormClosing;
         ((System.ComponentModel.ISupportInitialize)teamsDataGridView).EndInit();
         ResumeLayout(false);
         PerformLayout();
