@@ -15,7 +15,7 @@ class Program
         var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
         XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         
-        AbstractServer server = null;
+        RpcServer server = null;
         
         var userDbRepository = new UserDbRepository();
         var teamDbRepository = new TeamDbRepository();
@@ -26,20 +26,16 @@ class Program
         
         if (ConfigurationManager.AppSettings["port"] == null || ConfigurationManager.AppSettings["host"] == null)
         {
-            server = new ConcurrentServer(service);
+            server = new RpcServer(service, 9898, "localhost");
         }
         else
         {
             var port = ConfigurationManager.AppSettings["port"];
             var host = ConfigurationManager.AppSettings["host"];
-            server = new ConcurrentServer(service, int.Parse(port), host);
+            server = new RpcServer(service, int.Parse(port), host);
         }
-        server.Start();
-        
-        AppDomain.CurrentDomain.ProcessExit += (s, e) =>
-        {
-            server.Stop();
-            Console.WriteLine("Server stopped");
-        };
+
+        server.run();
+
     }
 }
