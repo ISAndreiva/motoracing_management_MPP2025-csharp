@@ -1,9 +1,19 @@
 namespace ConcursMotociclism.domain;
 
-public class Race(Guid id, string raceName, int raceClass ) : Entity<Guid>(id)
+public class Race : Entity<Guid>
 {
-    public string RaceName { get; } = raceName;
-    public int RaceClass { get; } = raceClass;
+    public Race()
+    {
+    }
+
+    public Race(Guid id, string raceName, int raceClass) : base(id)
+    {
+        RaceName = raceName;
+        RaceClass = raceClass;
+    }
+
+    public string RaceName { get; set; }
+    public int RaceClass { get; set; }
 
     protected bool Equals(Race other)
     {

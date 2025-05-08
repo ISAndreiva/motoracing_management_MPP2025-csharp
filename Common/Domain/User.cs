@@ -1,9 +1,19 @@
 namespace ConcursMotociclism.domain;
 
-public class User(Guid id, string username, string passwordHash) : Entity<Guid>(id)
+public class User : Entity<Guid>
 {
-    public string Username { get; } = username;
-    public string PasswordHash { get; } = passwordHash;
+    public string Username { get; }
+    public string PasswordHash { get; }
+    
+    public User()
+    {
+    }
+    
+    public User(Guid id, string username, string passwordHash) : base(id)
+    {
+        Username = username;
+        PasswordHash = passwordHash;
+    }
 
     protected bool Equals(User other)
     {

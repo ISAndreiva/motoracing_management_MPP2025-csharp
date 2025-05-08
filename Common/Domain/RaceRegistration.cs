@@ -1,9 +1,20 @@
 namespace ConcursMotociclism.domain;
 
-public class RaceRegistration(Guid id, Race race, Racer racer) : Entity<Guid>(id)
+public class RaceRegistration : Entity<Guid>
 {
-    public Race Race { get; } = race;
-    public Racer Racer { get; } = racer;
+    
+    public RaceRegistration() { } // EF Core uses this
+
+    public RaceRegistration(Guid id, Race race, Racer racer) : base(id)
+    {
+        Race = race;
+        Racer = racer;
+    }
+    
+    public Race Race { get; set; }
+    public Racer Racer { get; set; }
+    
+    
 
     protected bool Equals(RaceRegistration other)
     {

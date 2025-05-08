@@ -1,8 +1,16 @@
 namespace ConcursMotociclism.domain;
 
-public class Team(Guid id, string name) : Entity<Guid>(id)
+public class Team : Entity<Guid>
 {
-    public string Name { get; } = name;
+    public Team()
+    {
+    }
+    
+    public Team(Guid id, string name) : base(id)
+    {
+        Name = name;
+    }
+    public string Name { get; set; }
 
     protected bool Equals(Team other)
     {
