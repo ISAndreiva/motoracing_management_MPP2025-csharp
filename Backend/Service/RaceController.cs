@@ -3,7 +3,7 @@ using ConcursMotociclism.Repository;
 
 namespace ConcursMotociclism.Service;
 
-public class RaceController(IRaceRepository raceRepository)
+public class RaceController(IRaceRepository raceRepository) : IRaceController
 {
     public IEnumerable<int> GetUsedRaceClasses()
     {
@@ -23,5 +23,25 @@ public class RaceController(IRaceRepository raceRepository)
     public Race GetRaceByName(string name)
     {
         return raceRepository.GetRaceByName(name);
+    }
+    
+    public Race GetRaceById(Guid id)
+    {
+        return raceRepository.Get(id);
+    }
+
+    public void AddRace(Race race)
+    {
+        raceRepository.Add(race);
+    }
+
+    public void UpdateRace(Race race)
+    {
+        raceRepository.Update(race);
+    }
+    
+    public void DeleteRace(Guid id)
+    {
+        raceRepository.Remove(id);
     }
 }

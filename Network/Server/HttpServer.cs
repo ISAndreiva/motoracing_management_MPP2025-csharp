@@ -8,10 +8,12 @@ using Microsoft.Extensions.Hosting;
 
 namespace ConcursMotociclism.server;
 
-public class RpcServer(IObservableService service,  int port, string host)
+public class HttpServer(IObservableService service, IRaceController raceController,  int grpcPort, int restPort, string host)
 {
     private readonly IObservableService _service = service;
-    private readonly int _port = port;
+    private readonly IRaceController _raceController = raceController;
+    private readonly int _grpcPort = grpcPort;
+    private readonly int _restPort = restPort;
     private readonly string _host = host;
     
     public void run()
@@ -24,6 +26,8 @@ public class RpcServer(IObservableService service,  int port, string host)
                     {
                         services.AddGrpc();
                         services.AddSingleton<IObservableService>(_service);
+                        services.AddControllers();
+                        services.AddSingleton<IRaceController>(_raceController);
                     })
                     .Configure(app =>
                     {
@@ -31,13 +35,17 @@ public class RpcServer(IObservableService service,  int port, string host)
                         app.UseEndpoints(endpoints =>
                         {
                             endpoints.MapGrpcService<ServiceRpc>();
-
+                            endpoints.MapControllers();
                         });
                     }).ConfigureKestrel(options =>
                     {
-                        options.Listen(IPAddress.Parse(_host), _port, listenOptions =>
+                        options.Listen(IPAddress.Parse(_host), _grpcPort, listenOptions =>
                         {
                             listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+                        });
+                        options.Listen(IPAddress.Parse(_host), _restPort, listenOptions =>
+                        {
+                            listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
                         });
                     });
             }).Build().Run();

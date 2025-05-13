@@ -1,8 +1,7 @@
-﻿using ConcursMotociclism.server;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Reflection;
-using ConcursMotociclism.Repository.Db;
 using Backend.Repository.Orm;
+using ConcursMotociclism.server;
 using ConcursMotociclism.Service;
 using log4net;
 using log4net.Config;
@@ -14,7 +13,7 @@ class Program
         var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
         XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         
-        RpcServer server = null;
+        HttpServer server = null;
         
         // var userDbRepository = new UserDbRepository();
         // var teamDbRepository = new TeamDbRepository();
@@ -31,17 +30,22 @@ class Program
         var raceRegistrationOrmRepository = new RaceRegistrationOrmRepository(context);
         var service = new Service(userOrmRepository, teamOrmRepository, raceOrmRepository, racerOrmRepository, raceRegistrationOrmRepository);
 
-        var port = 9898;
+        var grpcPort = 9898;
+        var restPort = 8080;
         var host = "localhost";
-        if (ConfigurationManager.AppSettings["port"] != null)
+        if (ConfigurationManager.AppSettings["grpcPort"] != null)
         {
-            port = int.Parse(ConfigurationManager.AppSettings["port"]);
+            grpcPort = int.Parse(ConfigurationManager.AppSettings["grpcPort"]);
+        }
+        if (ConfigurationManager.AppSettings["restPort"] != null)
+        {
+            restPort = int.Parse(ConfigurationManager.AppSettings["restPort"]);
         }
         if (ConfigurationManager.AppSettings["host"] != null)
         {
             host = ConfigurationManager.AppSettings["host"];
         }
-        server = new RpcServer(service, port, host);
+        server = new HttpServer(service, new RaceController(raceOrmRepository), grpcPort, restPort, host);
 
         server.run();
 

@@ -2,20 +2,20 @@
 
 namespace ConcursMotociclism.dto;
 
-public class RaceDto(Guid id, string raceName, int raceClass)
+public class RaceDto(string id, string raceName, int raceClass)
 {
-    public Guid Id { get; set; } = id;
+    public string Id { get; set; } = id;
     public string RaceName { get; set; } = raceName;
     public int RaceClass { get; set; } = raceClass;
 
     public static RaceDto fromRace(Race race)
     {
-        return new RaceDto(race.Id, race.RaceName, race.RaceClass);
+        return new RaceDto(race.Id.ToString(), race.RaceName, race.RaceClass);
     }
     
     public Race ToRace()
     {
-        return new Race(Id, RaceName, RaceClass);
+        return new Race(Guid.Parse(Id), RaceName, RaceClass);
     }
     
     public override string ToString()
@@ -31,7 +31,7 @@ public class RaceDto(Guid id, string raceName, int raceClass)
             throw new ArgumentException("Invalid string format for RaceDto");
         }
 
-        var id = Guid.Parse(parts[0].Split('=')[1].Trim());
+        var id = parts[0].Split('=')[1].Trim();
         var raceName = parts[1].Split('=')[1].Trim();
         var raceClass = int.Parse(parts[2].Split('=')[1].Trim());
 
